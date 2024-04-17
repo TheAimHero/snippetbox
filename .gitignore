@@ -8,3 +8,5 @@ seed.sql
 # Tls
 tls/
 
+# Temp
+/temp
