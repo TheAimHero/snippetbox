@@ -35,7 +35,7 @@ func (u *UserModel) Insert(name, email, password string) error {
 	if err != nil {
 		return err
 	}
-	stmt := `INSERT INTO users (name, email, hashed_password, created) values (?, ?, ?, UTC_TIMESTAMP())`
+	stmt := `INSERT INTO users (name, email, hashed_password, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`
 	_, err = u.DB.Exec(stmt, name, email, hashedPassword)
 	if err != nil {
 		var mySQLError *mysql.MySQLError
@@ -52,7 +52,7 @@ func (u *UserModel) Insert(name, email, password string) error {
 func (u *UserModel) Authenticate(email, password string) (int, error) {
 	var id int
 	var hashedPassword []byte
-	stmt := `SELECT id, hashed_password FROM users WHERE email = ?`
+	stmt := `SELECT id, hashed_password FROM users WHERE email = $1`
 	err := u.DB.QueryRow(stmt, email).Scan(&id, &hashedPassword)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -70,14 +70,14 @@ func (u *UserModel) Authenticate(email, password string) (int, error) {
 
 func (u *UserModel) Exists(id int) (bool, error) {
 	var exists bool
-	stmt := `SELECT EXISTS(SELECT true FROM users WHERE id = ?)`
+	stmt := `SELECT EXISTS(SELECT true FROM users WHERE id = $1)`
 	err := u.DB.QueryRow(stmt, id).Scan(&exists)
 	return exists, err
 }
 
 func (u *UserModel) Get(id int) (*User, error) {
 	var user User
-	stmt := `SELECT id, name, email, created FROM users WHERE id = ?`
+	stmt := `SELECT id, name, email, created FROM users WHERE id = $1`
 	err := u.DB.QueryRow(stmt, id).Scan(&user.ID, &user.Name, &user.Email, &user.Created)
 	if err != nil {
 		return nil, ErrNoRecord
@@ -86,7 +86,7 @@ func (u *UserModel) Get(id int) (*User, error) {
 }
 
 func (u *UserModel) PasswordUpdate(id int, currentPassword, newPassword string) error {
-	stmt := `SELECT hashed_password FROM users WHERE id = ?`
+	stmt := `SELECT hashed_password FROM users WHERE id = $1`
 	var hashedPassword []byte
 	err := u.DB.QueryRow(stmt, id).Scan(&hashedPassword)
 	if err != nil {
@@ -103,7 +103,10 @@ func (u *UserModel) PasswordUpdate(id int, currentPassword, newPassword string) 
 		return err
 	}
 	hashedPassword, err = bcrypt.GenerateFromPassword([]byte(newPassword), 12)
-	stmt = `UPDATE users SET hashed_password = ? WHERE id = ?`
+	if err != nil {
+		return err
+	}
+	stmt = `UPDATE users SET hashed_password = $1 WHERE id = $2`
 	_, err = u.DB.Exec(stmt, hashedPassword, id)
 	return err
 }

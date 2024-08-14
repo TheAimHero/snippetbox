@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/TheAimHero/sb/internal/models"
-	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/v2"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 type application struct {
@@ -29,14 +29,14 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "root:root@tcp(localhost:3306)/snippetbox?parseTime=true&timeout=10s", "MySQL data source name")
+	dsn := flag.String("dsn", "postgresql://postgres:password@localhost:5432/snippetbox?sslmode=disable", "MySQL data source name")
 	debug := flag.Bool("debug", false, "enable debug mode")
 	flag.Parse()
 
 	infolog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorlog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	db, err := openDb(*dsn)
+	db, err := openDB(*dsn)
 	if err != nil {
 		errorlog.Fatal(err)
 	}
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	sessionManager := scs.New()
-	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Store = postgresstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
 	sessionManager.Cookie.Secure = true
 
@@ -80,8 +80,8 @@ func main() {
 	errorlog.Fatal(err)
 }
 
-func openDb(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
