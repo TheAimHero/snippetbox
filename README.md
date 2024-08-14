@@ -1,7 +1,5 @@
 <a id="readme-top"></a>
-[![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
@@ -119,8 +117,6 @@ docker compose up
 
 ![Account](images/account.png)
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contributing
@@ -166,9 +162,7 @@ Project Link: [https://github.com/TheAimHero/snippetbox](https://github.com/TheA
 [forks-url]: https://github.com/TheAimHero/snippetbox/network/members
 [stars-shield]: https://img.shields.io/github/stars/TheAimHero/snippetbox.svg?style=for-the-badge
 [stars-url]: https://github.com/TheAimHero/snippetbox/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TheAimHero/snippetbox.svg?style=for-the-badge
-[issues-url]: https://github.com/TheAimHero/snippetbox/issues
 [license-shield]: https://img.shields.io/github/license/TheAimHero/snippetbox.svg?style=for-the-badge
 [license-url]: https://github.com/TheAimHero/snippetbox/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/TheAimHero
+[linkedin-url]: https://linkedin.com/in/vedant-g-b1b806133
