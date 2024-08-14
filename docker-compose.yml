@@ -1,0 +1,52 @@
+name: snippetbox
+services:
+  app:
+    platform: "linux/amd64"
+    depends_on:
+      - database
+    secrets:
+      - server_cert
+      - server_key
+    build:
+      context: .
+      target: prod
+      dockerfile: Dockerfile
+      args:
+        - SNIPPETBOX_DB_DSN=${SNIPPETBOX_DB_DSN}
+    container_name: sb
+    restart: always
+    ports:
+      - "4000:4000"
+    image: snippetbox:latest
+    env_file:
+      - .env
+    networks:
+      - sb-net
+
+  database:
+    image: postgres:14
+    container_name: sb-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/database
+    env_file:
+      - ./.env
+    networks:
+      - sb-net
+
+secrets:
+  server_cert:
+    file: ./tls/server_cert.pem
+  server_key:
+    file: ./tls/server_key.pem
+
+volumes:
+  pgdata:
+
+networks:
+  sb-net:
