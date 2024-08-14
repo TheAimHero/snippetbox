@@ -31,6 +31,7 @@ func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	dsn := flag.String("dsn", "postgresql://postgres:password@localhost:5432/snippetbox?sslmode=disable", "MySQL data source name")
 	debug := flag.Bool("debug", false, "enable debug mode")
+	https := flag.Bool("https", false, "enable https")
 	flag.Parse()
 
 	infolog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -75,8 +76,12 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-  infolog.Printf("Starting server on %s", *addr)
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	infolog.Printf("Starting server on %s", *addr)
+	if *https {
+		err = srv.ListenAndServeTLS("/run/secrets/server_cert", "/run/secrets/server_key")
+	} else {
+		err = srv.ListenAndServe()
+	}
 	errorlog.Fatal(err)
 }
 

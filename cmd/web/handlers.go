@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	// "strings"
-	// "unicode/utf8"
 
 	"github.com/TheAimHero/sb/internal/models"
 	"github.com/TheAimHero/sb/internal/validator"
@@ -95,18 +93,10 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		Content: content,
 		Expires: expires,
 	}
-	// if strings.TrimSpace(form.Title) == "" {
 	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
-	// } else if utf8.RuneCountInString(title) > 100 {
 	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field is too long (maximum is 100 characters)")
-	// }
-	// if strings.TrimSpace(form.Content) == "" {
 	form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
-	// }
-	// if form.Expires != 1 && form.Expires != 7 && form.Expires != 365 {
 	form.CheckField(validator.PermittedInt(form.Expires, 1, 7, 365), "expires", "This field must equal 1, 7 or 365")
-	// form.FieldErrors["expires"] = "This field must equal 1, 7 or 365"
-	// }
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
